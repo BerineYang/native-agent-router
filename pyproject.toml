@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Native Agent Runtime Router: a model-free kernel for routing coding tasks to native CLI agents through MCP or CLI."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "native-agent-router contributors" }]
+authors = [{ name = "BerineYang" }]
 requires-python = ">=3.10"
 keywords = ["mcp", "acp", "agent", "zcode", "codex", "opencode", "router"]
 classifiers = [
