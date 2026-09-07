@@ -1,0 +1,47 @@
+{
+  "$comment": "Copy to ~/.native-agent-router/agents.json (Windows: %USERPROFILE%\\.native-agent-router\\agents.json) and edit. JSON has no comments, so every key is documented in README.md 'Configuration' and docs/BACKENDS.md. Run `nar doctor` to see what this machine auto-discovers.",
+  "version": 1,
+  "wait_default_sec": 120,
+  "timeout_default_sec": 1800,
+  "verify_timeout_sec": 600,
+  "max_result_chars": 12000,
+  "repair_default": true,
+  "agents": {
+    "zcode": {
+      "adapter": "zcode-native",
+      "enabled": true,
+      "default_mode": "plan",
+      "default_permission_policy": "deny",
+      "provider": "builtin:bigmodel-coding-plan",
+      "model": "GLM-5.3",
+      "thought_level": "low",
+      "tool_allowlist": null,
+      "zcode_home": null,
+      "credentials": "auto",
+      "env": {}
+    },
+    "zcode-fast": {
+      "adapter": "zcode-native",
+      "enabled": true,
+      "default_mode": "plan",
+      "default_permission_policy": "deny",
+      "provider": "builtin:bigmodel-coding-plan",
+      "model": "GLM-5.3-Flash",
+      "thought_level": "low"
+    },
+    "opencode": {
+      "adapter": "acp-generic",
+      "enabled": true,
+      "command": ["opencode", "acp"],
+      "model": "opencode-go/deepseek-v4-flash",
+      "default_permission_policy": "deny"
+    },
+    "gemini": {
+      "adapter": "acp-generic",
+      "enabled": false,
+      "command": ["gemini", "--experimental-acp"],
+      "model": "gemini-2.5-pro",
+      "model_args": ["--model", "{model}"]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "native-agent-router"
+version = "1.0.0"
+description = "Native Agent Runtime Router: a model-free kernel for routing coding tasks to native CLI agents through MCP or CLI."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "native-agent-router contributors" }]
+requires-python = ">=3.10"
+keywords = ["mcp", "acp", "agent", "zcode", "codex", "opencode", "router"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = ["mcp>=1.10,<2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+nar = "native_agent_router.cli:main"
+nar-mcp = "native_agent_router.mcp_server:main"
+
+[project.urls]
+Homepage = "https://github.com/BerineYang/native-agent-router"
+Repository = "https://github.com/BerineYang/native-agent-router"
+Issues = "https://github.com/BerineYang/native-agent-router/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/native_agent_router"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["real: calls real installed agents (deselect with -m 'not real')"]

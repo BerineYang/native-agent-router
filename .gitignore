@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.nar-home/
+.tmp-verify/
+*.egg-info/
+.pytest_cache/

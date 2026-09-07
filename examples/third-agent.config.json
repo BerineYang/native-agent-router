@@ -1,0 +1,20 @@
+{
+  "$comment": "Third-agent recipe: any ACP server, config only. Merge into ~/.native-agent-router/agents.json. gemini CLI: `gemini --experimental-acp` (ACP support flag — verify against the installed version's docs before trusting).",
+  "agents": {
+    "gemini": {
+      "adapter": "acp-generic",
+      "enabled": true,
+      "command": ["gemini", "--experimental-acp"],
+      "model": "gemini-2.5-pro",
+      "model_args": ["--model", "{model}"],
+      "default_permission_policy": "deny"
+    },
+    "kimi": {
+      "$comment": "example: an ACP agent that takes cwd as a flag instead of relying on process cwd",
+      "adapter": "acp-generic",
+      "enabled": false,
+      "command": ["kimi", "acp"],
+      "cwd_arg": "--workdir"
+    }
+  }
+}
