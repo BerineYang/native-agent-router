@@ -28,11 +28,15 @@
 
 需要 Python 3.10 或更高版本。ZCode 适配器还需要 Node.js 22 或更高版本，以及 ZCode 桌面应用（或位于 `PATH` 中的 CLI）。ACP Agent 需要对应的 ACP server 可执行文件。
 
+本项目目前尚未发布到 PyPI，请从克隆的仓库安装：
+
 ```bash
-pip install native-agent-router        # 也可以使用：pipx install native-agent-router
-# 从克隆的仓库安装：
-pip install -e .
+git clone https://github.com/BerineYang/native-agent-router.git
+cd native-agent-router
+python -m pip install .
 ```
+
+如果需要参与开发，将最后一条命令换成 `python -m pip install -e .`。在仓库目录中也可以运行 `pipx install .`。
 
 检查环境与自动发现结果：
 
@@ -40,7 +44,27 @@ pip install -e .
 nar doctor
 ```
 
-`nar doctor` 会显示找到的 ZCode bundle、Node.js 和 Git，并在缺少组件时给出处理方法。它不会输出凭据。
+如果终端仍提示找不到 `nar`，请重启终端，或者使用不依赖脚本目录是否位于 `PATH` 的模块形式：
+
+```bash
+python -m native_agent_router doctor
+```
+
+`nar doctor` 会使用 `[OK]`、`[X]` 和 `[i]` 状态标记显示 ZCode bundle、Node.js 和 Git 的检查结果，并在缺少组件时给出处理方法。它不会输出凭据。只有准备使用 `zcode-native` 适配器时，缺少 ZCode 才需要处理。
+
+### 网络问题与国内镜像
+
+PyPI 镜像只能加速依赖包，无法让尚未发布的 `native-agent-router` 出现在 PyPI。请在本地仓库目录中用镜像安装：
+
+```bash
+# 阿里云镜像，仅对本次命令生效
+python -m pip install -i https://mirrors.aliyun.com/pypi/simple/ .
+
+# 清华 TUNA 镜像，仅对本次命令生效；该镜像目前仍正常提供服务
+python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/ .
+```
+
+建议优先使用单次命令的 `-i` 参数，不要直接修改 pip 全局配置。如果 `git clone` 不稳定，可以在 GitHub Releases 页面下载所需标签的源码压缩包，解压后进入该目录，再运行 `python -m pip install .`。第三方 GitHub 代理会改变下载信任链；安装前请核对提交或压缩包来源。
 
 ## 快速开始
 
@@ -180,7 +204,7 @@ nar stats [agent_id]            # 确定性的各 Agent 评分统计
 
 ```bash
 pip install -e ".[dev]"
-pytest -q                 # 64 项测试，不调用模型、不访问网络
+pytest -q                 # 66 项测试，不调用模型、不访问网络
 pytest -q -m real         # 可选：调用本机真实 Agent，会消耗 token
 ```
 

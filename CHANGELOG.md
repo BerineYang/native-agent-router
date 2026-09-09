@@ -2,6 +2,13 @@
 
 All notable changes to Native Agent Runtime Router are documented here.
 
+## Unreleased
+
+- Corrected installation instructions because the package is not yet published on PyPI.
+- Added per-command Alibaba Cloud and Tsinghua TUNA mirror examples for dependency installation.
+- Added `[OK]`, `[X]`, and `[i]` markers plus Node.js version validation to `nar doctor`.
+- Added two regression tests for healthy and missing dependency diagnostics.
+
 ## [1.0.0] - 2026-09-07
 
 - Added a deterministic, model-free task kernel with bounded waiting, workspace locks, cancellation, recovery, budgets, verification, and one pre-authorized repair.

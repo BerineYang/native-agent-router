@@ -36,11 +36,16 @@ More native agents are being supported…
 Requires Python >= 3.10. For the ZCode adapter: Node.js >= 22 and the ZCode
 desktop app (or its CLI on `PATH`). For ACP agents: any ACP server binary.
 
+The package is not yet published on PyPI. Install it from a cloned checkout:
+
 ```bash
-pip install native-agent-router        # or: pipx install native-agent-router
-# from a clone:
-pip install -e .
+git clone https://github.com/BerineYang/native-agent-router.git
+cd native-agent-router
+python -m pip install .
 ```
+
+For development, replace the last command with `python -m pip install -e .`.
+`pipx install .` also works from the repository directory.
 
 Verify environment and discovery:
 
@@ -48,8 +53,39 @@ Verify environment and discovery:
 nar doctor
 ```
 
+If the shell still says that `nar` is not a command, restart the terminal or
+run the module form, which does not depend on the scripts directory being on
+`PATH`:
+
+```bash
+python -m native_agent_router doctor
+```
+
 `nar doctor` prints what it found (ZCode bundle, node, git) and **what to do if
-something is missing**. It never prints credentials.
+something is missing**, using `[OK]`, `[X]`, and `[i]` status markers. It never
+prints credentials. A missing ZCode entry matters only when you intend to use
+the `zcode-native` adapter.
+
+### Network troubleshooting
+
+A PyPI mirror accelerates dependencies; it does not make the unpublished
+`native-agent-router` package appear on PyPI. Use a mirror while installing the
+local checkout:
+
+```bash
+# Alibaba Cloud mirror (one command only)
+python -m pip install -i https://mirrors.aliyun.com/pypi/simple/ .
+
+# Tsinghua TUNA mirror (one command only)
+python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/ .
+```
+
+Prefer `-i` for a single command instead of changing pip's global configuration.
+If `git clone` is unreliable, download the source archive for the desired tag
+from the GitHub Releases page, extract it, open a terminal in that directory,
+and run the same `python -m pip install .` command. A third-party GitHub proxy
+changes the download trust path; verify the resulting commit or archive before
+installing it.
 
 ## Quickstart
 
@@ -209,7 +245,7 @@ nar stats [agent_id]            # deterministic per-agent score statistics
 
 ```bash
 pip install -e ".[dev]"
-pytest -q                 # 64 tests, no model calls, no network
+pytest -q                 # 66 tests, no model calls, no network
 pytest -q -m real         # opt-in: hits your real installed agents (spends tokens!)
 ```
 
