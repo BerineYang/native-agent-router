@@ -4,8 +4,7 @@ All notable changes to Native Agent Runtime Router are documented here.
 
 ## Unreleased
 
-- Corrected installation instructions because the package is not yet published on PyPI.
-- Added per-command Alibaba Cloud and Tsinghua TUNA mirror examples for dependency installation.
+- Replaced network installation guidance with official GitHub source and branch archive instructions.
 - Added `[OK]`, `[X]`, and `[i]` markers plus Node.js version validation to `nar doctor`.
 - Added two regression tests for healthy and missing dependency diagnostics.
 

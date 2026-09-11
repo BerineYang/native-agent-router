@@ -36,7 +36,7 @@ More native agents are being supported…
 Requires Python >= 3.10. For the ZCode adapter: Node.js >= 22 and the ZCode
 desktop app (or its CLI on `PATH`). For ACP agents: any ACP server binary.
 
-The package is not yet published on PyPI. Install it from a cloned checkout:
+Install from the official GitHub source:
 
 ```bash
 git clone https://github.com/BerineYang/native-agent-router.git
@@ -44,48 +44,34 @@ cd native-agent-router
 python -m pip install .
 ```
 
-For development, replace the last command with `python -m pip install -e .`.
-`pipx install .` also works from the repository directory.
-
-Verify environment and discovery:
+If `git clone` is unreliable, download the official
+[`v1.0.0` branch source ZIP](https://github.com/BerineYang/native-agent-router/archive/refs/heads/v1.0.0.zip),
+extract it, open a terminal in the extracted directory, and run:
 
 ```bash
-nar doctor
+python -m pip install .
 ```
 
-If the shell still says that `nar` is not a command, restart the terminal or
-run the module form, which does not depend on the scripts directory being on
-`PATH`:
+For development, replace the install command with
+`python -m pip install -e .`. In the repository directory, `pipx install .`
+also works.
+
+On Windows, verify the installation with the module form first. It works even
+when the Python scripts directory is missing from `PATH`:
 
 ```bash
 python -m native_agent_router doctor
 ```
 
-`nar doctor` prints what it found (ZCode bundle, node, git) and **what to do if
-something is missing**, using `[OK]`, `[X]`, and `[i]` status markers. It never
-prints credentials. A missing ZCode entry matters only when you intend to use
-the `zcode-native` adapter.
-
-### Network troubleshooting
-
-A PyPI mirror accelerates dependencies; it does not make the unpublished
-`native-agent-router` package appear on PyPI. Use a mirror while installing the
-local checkout:
+If the scripts directory is on `PATH`, the shorter command is equivalent:
 
 ```bash
-# Alibaba Cloud mirror (one command only)
-python -m pip install -i https://mirrors.aliyun.com/pypi/simple/ .
-
-# Tsinghua TUNA mirror (one command only)
-python -m pip install -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/ .
+nar doctor
 ```
 
-Prefer `-i` for a single command instead of changing pip's global configuration.
-If `git clone` is unreliable, download the source archive for the desired tag
-from the GitHub Releases page, extract it, open a terminal in that directory,
-and run the same `python -m pip install .` command. A third-party GitHub proxy
-changes the download trust path; verify the resulting commit or archive before
-installing it.
+The doctor command uses `[OK]`, `[X]`, and `[i]` markers for the ZCode bundle,
+Node.js, Git, and configuration checks. It never prints credentials. A missing
+ZCode entry matters only when you intend to use the `zcode-native` adapter.
 
 ## Quickstart
 
