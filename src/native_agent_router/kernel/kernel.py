@@ -21,7 +21,7 @@ from ..diagnostics import classify_error
 from .stats import AgentStats, compute_score
 from .store import TaskStore, WorkspaceBusy, WorkspaceLock
 
-TERMINAL_STATES = {"succeeded", "failed", "cancelled", "interrupted", "budget_exceeded"}
+TERMINAL_STATES = {"succeeded", "failed", "cancelled", "interrupted"}
 # "blocked" is NOT terminal: the watcher keeps observing and cancel/kill still apply.
 ACTIVE_STATES = {"queued", "running", "cancel_requested", "blocked"}
 CREATE_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
@@ -93,6 +93,13 @@ class Kernel:
             if os.path.isabs(s) or norm.startswith("/") or ".." in Path(norm).parts:
                 raise KernelError(f"scope_files must be relative paths inside the workspace; got '{s}'")
         settings = self.config.settings
+        try:
+            agent_spec = self.config.agent_spec(agent_id)
+        except KeyError as e:
+            raise KernelError(str(e)) from e
+        task_timeout = float(timeout_sec if timeout_sec is not None else settings["timeout_default_sec"])
+        if task_timeout <= 0:
+            raise KernelError("timeout_sec must be greater than zero")
         spec_in = {
             "agent_id": agent_id,
             "goal": str(goal),
@@ -100,18 +107,14 @@ class Kernel:
             "scope_files": scope,
             "forbid": [str(s) for s in (forbid or [])],
             "verify": [v if isinstance(v, list) else str(v) for v in (verify or [])],
-            "mode": mode,
+            "mode": mode if mode is not None else agent_spec.get("default_mode"),
             "permission_policy": permission_policy,
             "session_ref": session_ref,
-            "timeout_sec": min(float(timeout_sec or settings["timeout_default_sec"]), float(settings["wait_max_sec"])),
+            "timeout_sec": task_timeout,
             "budget_tokens": budget_tokens,
             "repair_allowed": settings["repair_default"] if repair_allowed is None else bool(repair_allowed),
             "idempotency_key": idempotency_key,
         }
-        try:
-            self.config.agent_spec(agent_id)
-        except KeyError as e:
-            raise KernelError(str(e)) from e
         if session_ref:
             self._validate_session_ref(agent_id, workspace, session_ref)
         task, duplicate = self.store.create(spec_in)

@@ -7,7 +7,7 @@ New agent backends are added by editing agents.json, not by adding tools.
 Error semantics (deliberate): a tool that CANNOT perform its job raises, which
 FastMCP turns into an MCP result with isError=True (distinct from a successful
 call whose business status field says "failed"). Business outcomes (succeeded /
-failed / blocked / cancelled) are returned as normal structured dicts with an
+failed / blocked / cancelled / interrupted) are returned as normal structured dicts with an
 `ok` field and a stable `code`. This lets orchestrators drive retry policy from
 `code`/`status` without guessing whether a payload is an error or a result.
 """
@@ -86,7 +86,7 @@ def run(agent_id: str, goal: str, workspace: str,
     - timeout_sec: per-turn timeout; on timeout the task becomes blocked (never
       silently resubmitted; the lock is held and a watcher keeps observing).
     - wait_sec: bounded block until finish (default: return immediately).
-    - budget_tokens: hard token budget; exceeded -> task failed (budget_exceeded).
+    - budget_tokens: hard token budget; exceeded -> status failed with code budget_exceeded.
     - permission_policy: "deny" (default) or "allow" (auto-allow within this task).
     - repair_allowed: one pre-authorized targeted repair attempt (default true).
     - idempotency_key: resubmitting the same key returns the original task.
@@ -105,8 +105,9 @@ def run(agent_id: str, goal: str, workspace: str,
 def wait(task_id: str, timeout_sec: float = 120) -> dict:
     """Bounded blocking wait for a task to reach a terminal or blocked state.
     Does not busy-poll. Returns the snapshot dict; if it still runs when the
-    timeout expires, wait_timed_out=true — call again later. 'submitted'/'running'
-    is NOT completion; only status succeeded/failed/blocked/cancelled/interrupted is."""
+    timeout expires, wait_timed_out=true — call again later. Terminal states are
+    succeeded/failed/cancelled/interrupted. blocked is observable but nonterminal:
+    the watcher continues to hold the lock and observe the native session."""
     return _run(kernel().wait, task_id, timeout_sec)
 
 

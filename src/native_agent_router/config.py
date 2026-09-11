@@ -31,7 +31,7 @@ AGENT_DEFAULTS = {
     "adapter": None,
     "command": None,
     "cwd_arg": None,
-    "default_mode": None,
+    "default_mode": "plan",
     "modes": None,
     "default_permission_policy": "deny",
     "env": None,

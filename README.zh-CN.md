@@ -99,7 +99,8 @@ nar run zcode "现在处理之前讨论的 --verbose 边界情况" /abs/path/to/
 | `wait_max_sec` | 3600 | 单次 `wait` 的上限，不限制任务自身的超时时间 |
 | `timeout_default_sec` | 1800 | 每轮任务的默认超时时间 |
 | `verify_timeout_sec` | 600 | 每条验证命令的超时时间 |
-| `max_result_chars` | 12000 | 返回给编排 Agent 的结果摘要字符预算 |
+| `max_result_chars` | 12000 | 为配置兼容性保留；当前各结果字段分别使用固定上限 |
+| `log_tail_chars` | 4000 | `inspect` 未指定 limit 时的默认分页字符数 |
 | `repair_default` | true | 每项任务允许一次预授权的定向修复 |
 | `verify_allow_shell` | false | 验证命令默认不经 shell 执行，而是使用 argv / `shlex.split`；只有确实需要 shell 语义时才设为 true |
 | `require_git_baseline` | false | 失败关闭模式：拒绝在非 Git 工作区启动 worker，确保修改始终可审计 |
@@ -118,12 +119,12 @@ nar run zcode "现在处理之前讨论的 --verbose 边界情况" /abs/path/to/
 | `model_args` | acp-generic | 通过 CLI 参数注入模型的模板，例如 `["--model","{model}"]` |
 | `provider` | zcode-native | 来自你自己的 `~/.zcode/v2/config.json` 的 ZCode provider ID |
 | `thought_level` | zcode-native | 例如 `low`、`high`、`max`，取决于模型能力 |
-| `default_mode` | zcode-native | `plan`（只读）、`build`、`edit` 或 `yolo` |
+| `default_mode` | 两者 | 默认为 `plan`；ZCode 还支持 `build`、`edit` 和 `yolo` |
 | `default_permission_policy` | 两者 | `deny`（诚实的默认值）或 `allow`（在单项任务内自动批准） |
 | `tool_allowlist` | zcode-native | 原生工具集限制，例如 `["Read","Grep","Glob"]` |
 | `zcode_home` | zcode-native | `"isolated"` 表示将 NAR 的 ZCode 会话保存在独立 home 中，参见 `docs/SECURITY.md` |
 | `credentials` | zcode-native | 默认 `auto`：复用用户自己的 ZCode 配置，参见下文 |
-| `env` | 两者 | Agent 子进程的额外环境变量；不要把秘密写在这里，因为它们会进入配置文件 |
+| `env` | 两者 | Agent 子进程的额外环境变量；其值会保存在 `agents.json` 中 |
 
 ### 模型选择
 
@@ -178,7 +179,7 @@ args = []
 | `inspect` | 按需分页读取 status、summary、diff、verify、log、raw、usage 或 `diagnose` |
 | `cancel` | 请求停止，并报告是否已经确认终止 |
 
-`run` 返回只代表任务已提交，不代表任务完成。只有 `succeeded`、`failed`、`cancelled`、`blocked`、`interrupted` 是最终状态。任务进入 `blocked` 后，内核会保留工作区锁并继续观察原生会话，直到出现真正的终止事件，或者你执行 `cancel` / `kill`。
+`run` 返回只代表任务已提交，不代表任务完成。终态只有 `succeeded`、`failed`、`cancelled` 和 `interrupted`。`blocked` 是可观察但非终态的状态：内核会保留工作区锁并继续观察原生会话，直到出现真正的终止事件，或者你执行 `cancel` / `kill`。超出 token 预算时，状态为 `failed`，错误码为 `budget_exceeded`。
 
 ## CLI 参考
 
@@ -198,7 +199,7 @@ nar stats [agent_id]            # 确定性的各 Agent 评分统计
 
 ```bash
 pip install -e ".[dev]"
-pytest -q                 # 66 项测试，不调用模型、不访问网络
+pytest -q                 # 67 项测试，不调用模型、不访问网络
 pytest -q -m real         # 可选：调用本机真实 Agent，会消耗 token
 ```
 

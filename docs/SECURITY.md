@@ -14,8 +14,9 @@ report honestly when it cannot verify changes (no-git baseline →
 
 ## Credentials
 
-- NAR never logs, stores, or transmits any API key. `nar doctor` and all task
-  records show provider ids and base URLs only.
+- In the default `credentials:"auto"` mode, NAR never logs, persists, or
+  uploads an API key. It sends the key only to the local ZCode app-server in the
+  protocol payload. `nar doctor` and all task records omit it.
 - **ZCode**: `credentials:"auto"` reads (read-only) the provider you configured
   in the ZCode desktop app (`~/.zcode/v2/config.json`) and passes the same
   provider/model/base-URL/key inside the **protocol payload** (`runtimeModel`)

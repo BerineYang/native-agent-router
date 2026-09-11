@@ -9,8 +9,9 @@ Protocol facts (see docs/PROTOCOL-ZCODE-016.md):
 - terminal signals: turn.completed / turn.failed / turn.terminal (may overlap;
   usage is counted from exactly one source, see _pick_usage)
 
-No credentials are injected: the ZCode backend reads ~/.zcode/v2/config.json
-itself. Model, provider and billing channel stay untouched.
+In credentials:auto mode, NAR reads ~/.zcode/v2/config.json read-only and sends
+the selected provider/model credentials only to the local ZCode app-server through
+its protocol payload. Model, provider and billing channel stay untouched.
 """
 
 from __future__ import annotations

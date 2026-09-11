@@ -4,6 +4,10 @@ All notable changes to Native Agent Runtime Router are documented here.
 
 ## Unreleased
 
+- Fixed task timeouts so `wait_max_sec` only caps `wait`, as documented.
+- Applied the documented default `plan` mode when a task omits `mode`.
+- Corrected blocked/terminal-state, token-budget, credential-flow, and test-count documentation.
+
 - Replaced network installation guidance with official GitHub source and branch archive instructions.
 - Added `[OK]`, `[X]`, and `[i]` markers plus Node.js version validation to `nar doctor`.
 - Added two regression tests for healthy and missing dependency diagnostics.

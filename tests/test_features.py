@@ -152,9 +152,21 @@ def test_model_selection_acp_args(home):
 
 
 def test_no_hidden_timeout_cap(home, git_ws):
-    k = make_kernel(home, {"w1": stub_agent([{"kind": "turn"}])})
+    from native_agent_router.config import Config
+    from native_agent_router.kernel.kernel import Kernel
+    from native_agent_router.kernel.store import TaskStore
+
+    k = Kernel(Config({"wait_max_sec": 1,
+                       "agents": {"w1": stub_agent([{"kind": "turn"}])}}, None, home),
+               TaskStore(home))
     t = k.submit("w1", "g", str(git_ws), timeout_sec=900, wait_sec=30)
     assert k.store.get(t["task_id"])["timeout_sec"] == 900.0
+
+
+def test_default_agent_mode_is_applied(home, git_ws):
+    k = make_kernel(home, {"w1": stub_agent([{"kind": "turn"}])})
+    t = k.submit("w1", "g", str(git_ws), wait_sec=30)
+    assert k.store.get(t["task_id"])["mode"] == "plan"
 
 
 # --------------------------------------------------- review-driven additions

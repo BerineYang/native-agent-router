@@ -60,6 +60,6 @@ def wait_terminal(k: Kernel, task_id: str, timeout: float = 30) -> dict:
     snap = {}
     while time.time() < deadline:
         snap = k.wait(task_id, timeout_sec=1)
-        if snap["status"] in ("succeeded", "failed", "cancelled", "blocked", "budget_exceeded"):
+        if snap["status"] in ("succeeded", "failed", "cancelled", "blocked", "interrupted"):
             return snap
     return snap

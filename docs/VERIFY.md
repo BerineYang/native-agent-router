@@ -4,7 +4,7 @@ All initial tests used independent, non-sensitive temp Git projects under
 `%TEMP%\nar-verify\*`. No production design projects, PDKs or real work trees
 were touched. Evidence lives under `G:\opencode\ad\native-agent-router\.nar-home\logs\<task_id>\`.
 
-## Automated (no model, no network) — 64 tests green
+## Automated (no model, no network) — 67 tests green
 
 `pytest -q` covers: misrouting (unknown/disabled agent), session cross-agent &
 cross-workspace rejection, duplicate submit (idempotency), workspace mutex +
@@ -17,7 +17,7 @@ verification failure → one repair → pass / fail, repair-disabled, budget
 exceeded, out-of-scope audit, no-git honesty, scope artifact exclusion, masked
 diagnosis, scoring determinism, model selection (zcode provider/model/thought;
 ACP model_args), MCP tool-layer end-to-end, ACP/ZCode protocol conformance
-against spec-shaped fake servers.
+against spec-shaped fake servers, plus `nar doctor` dependency/version diagnostics.
 
 ## Real verification (this machine, 2026-09-07)
 

@@ -114,7 +114,8 @@ built-in defaults + auto-discovery.
 | `wait_max_sec` | 3600 | cap on a single `wait` call (does NOT cap task timeouts) |
 | `timeout_default_sec` | 1800 | default per-turn timeout |
 | `verify_timeout_sec` | 600 | timeout per verification command |
-| `max_result_chars` | 12000 | result summary budget returned to the orchestrator |
+| `max_result_chars` | 12000 | reserved for configuration compatibility; current result fields have their own fixed bounds |
+| `log_tail_chars` | 4000 | default page size for `inspect` when no limit is supplied |
 | `repair_default` | true | one pre-authorized targeted repair per task |
 | `verify_allow_shell` | false | verify commands run without a shell (argv / `shlex.split`); set true only if you need shell semantics |
 | `require_git_baseline` | false | fail-closed: refuse to run a worker in a non-git workspace so changes are always auditable |
@@ -134,12 +135,12 @@ Every task must name an `agent_id` explicitly. There is **no global
 | `model_args` | acp-generic | CLI-arg model injection template, e.g. `["--model","{model}"]` |
 | `provider` | zcode-native | ZCode provider id from your own `~/.zcode/v2/config.json` |
 | `thought_level` | zcode-native | e.g. `low` / `high` / `max` (per model capabilities) |
-| `default_mode` | zcode-native | `plan` (read-only) / `build` / `edit` / `yolo` |
+| `default_mode` | both | defaults to `plan`; ZCode also supports `build` / `edit` / `yolo` |
 | `default_permission_policy` | both | `deny` (default, honest) or `allow` (auto-approve within one task) |
 | `tool_allowlist` | zcode-native | native tool-set restriction, e.g. `["Read","Grep","Glob"]` |
 | `zcode_home` | zcode-native | `"isolated"` = keep NAR's ZCode sessions in a private home (see docs/SECURITY.md) |
 | `credentials` | zcode-native | `auto` (default): reuse the user's own ZCode config; see below |
-| `env` | both | extra env for the agent subprocess (do NOT put secrets in here; they land in config files) |
+| `env` | both | extra environment variables for the agent subprocess; values are stored in `agents.json` |
 
 ### Model selection
 
@@ -208,10 +209,11 @@ rules you can drop into any agent's skill folder.
 | `inspect` | paged on-demand reads: status/summary/diff/verify/log/raw/usage/**diagnose** |
 | `cancel` | request stop and report whether it was **confirmed** |
 
-`run` returning means *submitted*, not *done*. Only
-`succeeded|failed|cancelled|blocked|interrupted` are final. On `blocked` the
-kernel keeps the workspace lock and watches the native session until a real
-terminal event arrives (or you `cancel`/`kill`).
+`run` returning means *submitted*, not *done*. Terminal states are
+`succeeded|failed|cancelled|interrupted`. `blocked` is observable but nonterminal:
+the kernel keeps the workspace lock and watches the native session until a real
+terminal event arrives (or you `cancel`/`kill`). A token budget violation uses
+status `failed` with code `budget_exceeded`.
 
 ## CLI reference
 
@@ -231,7 +233,7 @@ nar stats [agent_id]            # deterministic per-agent score statistics
 
 ```bash
 pip install -e ".[dev]"
-pytest -q                 # 66 tests, no model calls, no network
+pytest -q                 # 67 tests, no model calls, no network
 pytest -q -m real         # opt-in: hits your real installed agents (spends tokens!)
 ```
 
